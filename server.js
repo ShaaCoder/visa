@@ -1,24 +1,30 @@
+// Import dependencies
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { nanoid } from 'nanoid';
 import Application from './models/Application.js';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://shaacoder:visa@cluster0.bieob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.log(err));
 
 // CRUD APIs
 
@@ -37,7 +43,7 @@ app.post('/applications', async (req, res) => {
       amount,
       steps,
       documents,
-      timeline
+      timeline,
     });
     await newApplication.save();
     res.status(201).json({ message: 'Application created successfully', applicationId: newApplication._id });
@@ -75,7 +81,11 @@ app.put('/applications/:id', async (req, res) => {
   const { id } = req.params;
   const { status, agentId, steps, documents } = req.body;
   try {
-    const updatedApplication = await Application.findByIdAndUpdate(id, { status, agentId, steps, documents }, { new: true });
+    const updatedApplication = await Application.findByIdAndUpdate(
+      id,
+      { status, agentId, steps, documents },
+      { new: true }
+    );
     if (!updatedApplication) {
       return res.status(404).json({ error: 'Application not found' });
     }
@@ -99,6 +109,7 @@ app.delete('/applications/:id', async (req, res) => {
   }
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}); use processe .env create env file  
+});
