@@ -16,8 +16,12 @@ const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend origin here
+  origin: 'http://localhost:5173', // Your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow the methods you need
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers
+  credentials: true, // If you need credentials (cookies or headers)
 }));
+
 app.use(bodyParser.json());
 
 // Connect to MongoDB
